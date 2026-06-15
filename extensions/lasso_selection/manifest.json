@@ -1,0 +1,29 @@
+{
+  "manifest_version": 3,
+  "name": "Snap! Workspace Lasso Selection",
+  "version": "1.0",
+  "description": "Adds rectangle multi-selection, Alt-click toggles, and Backspace/Delete keyboard shortcuts to Snap! workspaces.",
+  "permissions": ["activeTab"],
+  "content_scripts": [
+    {
+      "matches": [
+        "https://snap.berkeley.edu/snap/snap.html*",
+        "http://localhost:8000/*",
+        "http://127.0.0.1:8000/*"
+      ],
+      "js": ["content.js"],
+      "run_at": "document_end"
+    }
+  ],
+  "web_accessible_resources": [
+    {
+      "resources": ["inject.js"],
+      "matches": ["<all_urls>"]
+    }
+  ],
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "snap-lasso-selection@antigravity.addon"
+    }
+  }
+}
