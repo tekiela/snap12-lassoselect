@@ -15,7 +15,7 @@ Currently in Snap!, managing large script workspaces can be tedious because ther
 
 ## 2. UX & Design Decisions
 
-To make the lasso selection feel like a premium, native extension of Snap!, the implementation respects the existing aesthetic rules of Morphic:
+To make the lasso selection feel like a native extension of Snap!, the implementation respects the existing aesthetic rules of Morphic:
 
 ```mermaid
 graph TD
