@@ -32,15 +32,15 @@ This runs 100% offline, bypasses browser bookmark URL length limits, and works a
 ---
 
 ### Method 2: Short Bookmarklet Loader (Zero-Install)
-Bookmarklets run JavaScript directly in your active tab. This loader fetches the script dynamically and works on all browsers without length truncation:
+Bookmarklets run JavaScript directly in your active tab. This loader fetches the script dynamically, works on all browsers (including Safari and Firefox) without length truncation, and automatically gets updates when you push commits to GitHub:
 
-1. Create a new bookmark in your browser named **Snap! Lasso Tool**.
-2. Replace the URL with this code (replace `YOUR_USERNAME` and `YOUR_REPO` with your repository details):
+1. Create a new bookmark in your browser named **Snap! Lasso Tool**.   
+2. Edit the bookmark and paste the following code into the **URL / Location** field:
    ```javascript
-   javascript:(function(){var%20s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/YOUR_USERNAME/YOUR_REPO@main/extensions/lasso_selection/inject.js';document.body.appendChild(s);})();
-   ```
-3. Open a Snap! editor page and click the bookmark to activate.
-
+   javascript:(function(){var%20s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/tekiela/snap12-lassoselect@main/extensions/lasso_selection/inject.js';document.body.appendChild(s);})();
+3. Open a Snap! editor page (e.g. https://snap.berkeley.edu/snap/snap.html) and click the bookmark to activate the tool.
+(Alternatively, if you want the fully offline/self-contained version that doesn't load code from GitHub, you can copy the raw text from 
+minified_bookmarklet.txt and use that as the bookmark URL).   
 ---
 
 ### Method 3: Browser Extension (Persistent & Automatic)
