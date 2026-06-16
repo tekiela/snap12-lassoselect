@@ -23,7 +23,7 @@ Falls back to normal text select-all when editing a block input.
 
 ## 🚀 Installation & Loading Methods
 
-### Method 1: XML Library For SNAP!
+### Method 1: XML Library import For SNAP!
 This runs 100% offline, bypasses browser bookmark URL length limits, and works across all browsers.
 1. Download [libraries/lasso_selection.xml](libraries/lasso_selection.xml).
 2. Open any Snap! editor window.
