@@ -10,13 +10,13 @@ This tool works on both **local** Snap! instances and the official editors at **
 ---
 
 ## ✨ Features
-* **Lasso Selection:** Click and drag on any empty workspace background to draw a bright green-blueish bounding box. Releasing the mouse groups all intersecting stacks.
+* **Lasso Selection:** Click and drag to draw a bright green-blueish bounding box. Releasing the mouse groups all blocks.
+* **Click Anywhere:** Lassoing *any* part of the block group selects the entire stack.
 * **Alt-Drag Region Toggle:** Hold `Alt` while dragging a lasso to instantly toggle regions: it adds unselected blocks to your group and subtracts already-selected blocks!
-* **Deep Stack Selection:** Lassoing *any* part of a script stack (even the bottom block) smartly selects the entire intact stack.
-* **Select All:** Press `Cmd+A` (macOS) or `Ctrl+A` (Windows/Linux) to instantly select every block and comment in the workspace. Safely falls back to normal text select-all when editing a block input.
-* **Premium Styling:** Displays selection feedback via standard active block glow highlights and comment borders. Bounding boxes are borderless/transparent when inactive (no leftovers).
-* **Alt-Click Modifiers:** Press and hold `Alt` (or `Option` on macOS) while clicking any block or comment to add it to, or remove it from, the active selection. Clicking a block mid-stack toggles the whole stack.
-* **Instant Deletion:** Press `Backspace` or `Delete` keys to instantly delete the entire selected group without dialog confirmation pop-ups (safely ignored when editing text).
+* **Alt-Click :** Press and hold `Alt` (or `Option` on macOS) while clicking any block to add it to, or remove it from, the active selection. Clicking a block mid-stack toggles the whole stack.
+* **Select All:** Press `Cmd+A` (macOS) or `Ctrl+A` (Windows/Linux) to instantly select every block in the workspace.
+Falls back to normal text select-all when editing a block input.
+* **Instant Deletion:** Press `Backspace` or `Delete` keys to instantly delete the entire selected group.
 * **Deep Duplication:** Right-click a selected group to access the custom context menu and duplicate the selection.
 
 ---
