@@ -1,6 +1,6 @@
 # Feature Proposal: Workspace Lasso Multi-Selection of Blocks & Comments
 
-This document serves as a clean, structured proposal to present to the Snap! developers (on the [Snap! GitHub repository](https://github.com/jensmoenig/Snap) or the [Snap! Forums](https://forum.snap.berkeley.edu/)) for adding native lasso multi-selection into the Morphic editor core.
+This document serves as a proposal for adding native lasso multi-selection into the Morphic editor core.
 
 ---
 
