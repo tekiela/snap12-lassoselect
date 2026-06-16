@@ -13,9 +13,8 @@ This tool works on both **local** Snap! instances and the official editors at **
 * **Lasso Selection:** Click and drag to draw a bright green-blueish bounding box. Releasing the mouse groups all blocks.
 * **Click Anywhere:** Lassoing *any* part of the block group selects the entire stack.
 * **Alt-Drag Region Toggle:** Hold `Alt` while dragging a lasso to instantly toggle regions: it adds unselected blocks to your group and subtracts already-selected blocks!
-* **Alt-Click :** Press and hold `Alt` (or `Option` on macOS) while clicking any block to add it to, or remove it from, the active selection. Clicking a block mid-stack toggles the whole stack.
-* **Select All:** Press `Cmd+A` (macOS) or `Ctrl+A` (Windows/Linux) to instantly select every block in the workspace.
-Falls back to normal text select-all when editing a block input.
+* **Alt-Click:** Press and hold `Alt` (or `Option` on macOS) while clicking any block to add it to, or remove it from, the active selection. Clicking a block mid-stack toggles the whole stack.
+* **Select All:** Press `Cmd+A` (macOS) or `Ctrl+A` (Windows/Linux) to instantly select every block in the workspace. Falls back to normal text select-all when editing a block input.
 * **Instant Deletion:** Press `Backspace` or `Delete` keys to instantly delete the entire selected group.
 * **Deep Duplication:** Right-click a selected group to access the custom context menu and duplicate the selection.
 
@@ -23,7 +22,9 @@ Falls back to normal text select-all when editing a block input.
 
 ## 🚀 Installation & Loading Methods
 
-### Method 1: XML Library import For SNAP!
+Choose the loading format that best fits your workflow:
+
+### Method 1: Portable XML Library (Recommended for Safari & Firefox)
 This runs 100% offline, bypasses browser bookmark URL length limits, and works across all browsers.
 1. Download [libraries/lasso_selection.xml](libraries/lasso_selection.xml).
 2. Open any Snap! editor window.
@@ -33,18 +34,18 @@ This runs 100% offline, bypasses browser bookmark URL length limits, and works a
 
 ---
 
-### Method 2: Browser Bookmarklet (Zero-Install - but per project)
-Works in all Browsers.
+### Method 2: Bookmarklet (Zero-Install)
+Bookmarklets run JavaScript directly in your active tab.
 
-#### A: Internet-version — *(always up to date via cdn)*
+#### Option A — CDN Loader *(always up to date, requires internet)*
 1. Create a new bookmark in your browser named **Snap! Lasso Tool**.
-2. Edit and replace the URL with this code:
-   ```
+2. Replace the URL with this code:
+   ```javascript
    javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/tekiela/snap12-lassoselect@main/extensions/lasso_selection/inject.js?v=' + Date.now();document.body.appendChild(s);})();
    ```
 3. Open a Snap! editor page and click the bookmark to activate.
 
-#### B: — Offline-version *(no internet needed)*
+#### Option B — Self-contained offline bookmarklet *(no internet needed)*
 The entire extension is pre-minified into a single URL-safe string in [minified_bookmarklet.txt](minified_bookmarklet.txt).
 1. Open [minified_bookmarklet.txt](https://raw.githubusercontent.com/tekiela/snap12-lassoselect/main/minified_bookmarklet.txt) — you will see one long line of text.
 2. Select all and copy it.
@@ -53,7 +54,7 @@ The entire extension is pre-minified into a single URL-safe string in [minified_
 
 ---
 
-### Method 3: Browser Extension (Persistent across projects)
+### Method 3: Browser Extension (Persistent & Automatic)
 Loads the lasso tool automatically on every Snap! tab you open.
 
 #### For Chrome / Chromium Browsers:
@@ -66,16 +67,16 @@ Loads the lasso tool automatically on every Snap! tab you open.
 1. Open Firefox and go to `about:debugging`.
 2. Click **This Firefox** -> **Load Temporary Add-on...**
 3. Select `manifest.json` inside the `extensions/lasso_selection` folder.
+
 ---
 
 ## ⌨️ Keyboard Shortcuts
 
 | Shortcut | Action |
 |---|---|
-| `Alt` + Click | Toggle a block in/out of the selection |
-| `Alt` + Drag | Toggle a block in/out of the selection | INVERTS the selection!!
-| `Backspace` / `Delete` | Delete the active selection |
 | `Cmd+A` / `Ctrl+A` | Select all blocks and comments in the workspace |
+| `Backspace` / `Delete` | Delete the active selection |
+| `Alt` + Click | Toggle a block or comment in/out of the selection |
 
 ---
 
@@ -84,3 +85,7 @@ Loads the lasso tool automatically on every Snap! tab you open.
 * **UI Overlays:** HTML5 Canvas extensions & dynamic CSS-in-JS toast notifications.
 
 ---
+
+## 📝 Changelog
+
+See the full history of updates and fixes in [CHANGELOG.md](CHANGELOG.md).

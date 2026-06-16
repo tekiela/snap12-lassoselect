@@ -1,4 +1,4 @@
-## 📝 Changelog
+# Changelog
 
 ### v3.0
 * ✅ **NEW: Alt-Drag Region Toggle** — Hold `Alt` while drawing a lasso to dynamically add unselected blocks and subtract selected blocks.
