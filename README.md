@@ -72,10 +72,10 @@ Loads the lasso tool automatically on every Snap! tab you open.
 
 | Shortcut | Action |
 |---|---|
-| `Cmd+A` / `Ctrl+A` | Select all blocks and comments in the workspace |
-| `Backspace` / `Delete` | Delete the active selection |
 | `Alt` + Click | Toggle a block in/out of the selection |
 | `Alt` + Drag | Toggle a block in/out of the selection | INVERTS the selection!!
+| `Backspace` / `Delete` | Delete the active selection |
+| `Cmd+A` / `Ctrl+A` | Select all blocks and comments in the workspace |
 | mouse_Right allows duplication and deletion |
 
 
