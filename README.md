@@ -53,7 +53,7 @@ The entire extension is pre-minified into a single URL-safe string in [minified_
 
 ---
 
-### Method 3: Browser Extension (Persistent accross projects)
+### Method 3: Browser Extension (Persistent across projects)
 Loads the lasso tool automatically on every Snap! tab you open.
 
 #### For Chrome / Chromium Browsers:
