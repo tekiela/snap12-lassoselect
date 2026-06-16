@@ -40,7 +40,7 @@ Works in all Browsers.
 1. Create a new bookmark in your browser named **Snap! Lasso Tool**.
 2. Edit and replace the URL with this code:
    ```
-javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/tekiela/snap12-lassoselect@main/extensions/lasso_selection/inject.js?v=' + Date.now();document.body.appendChild(s);})();
+   javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/tekiela/snap12-lassoselect@main/extensions/lasso_selection/inject.js?v=' + Date.now();document.body.appendChild(s);})();
    ```
 3. Open a Snap! editor page and click the bookmark to activate.
 
