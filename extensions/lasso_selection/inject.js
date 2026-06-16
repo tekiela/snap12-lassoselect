@@ -61,6 +61,7 @@
         LassoGroupMorph.prototype = new Morph();
         LassoGroupMorph.prototype.constructor = LassoGroupMorph;
         LassoGroupMorph.uber = Morph.prototype;
+        LassoGroupMorph.prototype.isLassoGroup = true;
 
         LassoGroupMorph.prototype.init = function () {
             LassoGroupMorph.uber.init.call(this);
@@ -106,31 +107,29 @@
             );
         };
 
+        // NEW: Ignore clicks on the transparent background of the group
+        // If a user clicks empty space between selected blocks, it should fall through to ScriptsMorph to deselect
+        LassoGroupMorph.prototype.topMorphAt = function (point) {
+            var i, result;
+            if (!this.isVisible) { return null; }
+            for (i = this.children.length - 1; i >= 0; i -= 1) {
+                result = this.children[i].topMorphAt(point);
+                if (result) { return result; }
+            }
+            return null; // Never return `this` (the transparent container itself)
+        };
+
         LassoGroupMorph.prototype.highlightChild = function (aMorph) {
             if (aMorph instanceof BlockMorph) {
                 if (!aMorph.getHighlight()) {
                     aMorph.addHighlight(); // green-blueish activeHighlight glow
                 }
-            } else if (aMorph instanceof CommentMorph) {
-                if (!aMorph.originalBorderColor) {
-                    aMorph.originalBorderColor = aMorph.borderColor;
-                }
-                aMorph.borderColor = new Color(153, 255, 213);
-                aMorph.border = 3;
-                aMorph.changed();
             }
         };
 
         LassoGroupMorph.prototype.unhighlightChild = function (aMorph) {
             if (aMorph instanceof BlockMorph) {
                 aMorph.removeHighlight();
-            } else if (aMorph instanceof CommentMorph) {
-                if (aMorph.originalBorderColor) {
-                    aMorph.borderColor = aMorph.originalBorderColor;
-                    delete aMorph.originalBorderColor;
-                }
-                aMorph.border = 1;
-                aMorph.changed();
             }
         };
 
@@ -179,7 +178,16 @@
             var scripts = this.parentThatIsA(ScriptsMorph);
             if (!scripts) { return; }
 
-            var group = this.parentThatIsA(LassoGroupMorph);
+            var group = null;
+            var p = this.parent;
+            while (p) {
+                if (p.isLassoGroup === true) {
+                    group = p;
+                    break;
+                }
+                p = p.parent;
+            }
+
             if (group) {
                 group.removeChild(this);
                 scripts.add(this);
@@ -188,7 +196,7 @@
                 }
             } else {
                 var existingGroup = scripts.children.find(function(child) {
-                    return child instanceof LassoGroupMorph;
+                    return child.isLassoGroup === true;
                 });
                 if (existingGroup) {
                     existingGroup.add(this);
@@ -201,24 +209,65 @@
             scripts.changed();
         };
 
-        // 3. Patch Hand modifiers to track Alt-clicks
+        // 3. Patch Hand modifiers to track Alt-clicks and instantly toggle selection
         var originalMouseDown = HandMorph.prototype.processMouseDown;
         HandMorph.prototype.processMouseDown = function (ev) {
             this.altPressed = (ev && ev.altKey) || false;
-            originalMouseDown.apply(this, arguments);
+            
+            // Instantly toggle selection on MouseDown if Alt is held
+            if (this.altPressed) {
+                var morph = this.morphAtPointer();
+                var target = morph;
+                while (target && !(target instanceof BlockMorph)) {
+                    target = target.parent;
+                }
+                if (target) {
+                    if (target instanceof BlockMorph && !target.isTemplate) {
+                        var top = typeof target.topBlock === 'function' ? target.topBlock() : target;
+                        if (top) {
+                            top.toggleSelection();
+                        } else {
+                            target.toggleSelection();
+                        }
+                        return; // Stop further event processing
+                    }
+                }
+            }
+
+            if (typeof originalMouseDown === 'function') {
+                originalMouseDown.apply(this, arguments);
+            }
         };
 
         var originalMouseUp = HandMorph.prototype.processMouseUp;
         HandMorph.prototype.processMouseUp = function (ev) {
             var eventObj = ev || arguments[0] || {};
             this.altPressed = eventObj.altKey || false;
-            originalMouseUp.apply(this, arguments);
+            
+            var target = this.clickTarget;
+            
+            if (typeof originalMouseUp === 'function') {
+                originalMouseUp.apply(this, arguments);
+            }
+            
+            // Fix ghost lasso: Morphic skips mouseClickLeft if released over a child morph
+            if (target && target.lassoStart && target.lassoFeedback) {
+                target.mouseClickLeft(this.position());
+            }
         };
 
         // Patch Morph.prototype.rootForGrab
         var originalMorphRootForGrab = Morph.prototype.rootForGrab;
         Morph.prototype.rootForGrab = function () {
-            var group = this.parentThatIsA(LassoGroupMorph);
+            var group = null;
+            var p = this.parent;
+            while (p) {
+                if (p.isLassoGroup === true) {
+                    group = p;
+                    break;
+                }
+                p = p.parent;
+            }
             if (group) {
                 return group;
             }
@@ -228,7 +277,15 @@
         // Patch Morph.prototype.contextMenu
         var originalMorphContextMenu = Morph.prototype.contextMenu;
         Morph.prototype.contextMenu = function () {
-            var group = this.parentThatIsA(LassoGroupMorph);
+            var group = null;
+            var p = this.parent;
+            while (p) {
+                if (p.isLassoGroup === true) {
+                    group = p;
+                    break;
+                }
+                p = p.parent;
+            }
             if (group) {
                 return group.userMenu();
             }
@@ -238,53 +295,67 @@
         // 4. Intercept Block and Comment clicks
         var originalBlockRootForGrab = BlockMorph.prototype.rootForGrab;
         BlockMorph.prototype.rootForGrab = function () {
-            var group = this.parentThatIsA(LassoGroupMorph);
+            var group = null;
+            var p = this.parent;
+            while (p) {
+                if (p.isLassoGroup === true) {
+                    group = p;
+                    break;
+                }
+                p = p.parent;
+            }
+            
             if (group) {
                 return group;
             }
-            return originalBlockRootForGrab.apply(this, arguments);
+            if (typeof originalBlockRootForGrab === 'function') {
+                return originalBlockRootForGrab.apply(this, arguments);
+            }
+            return this;
         };
-
         var originalBlockMouseClickLeft = BlockMorph.prototype.mouseClickLeft;
         BlockMorph.prototype.mouseClickLeft = function () {
-            var altClicked = this.world().hand.altPressed;
-            if (altClicked && !this.isTemplate) {
-                this.toggleSelection();
-                return;
+            if (typeof originalBlockMouseClickLeft === 'function') {
+                originalBlockMouseClickLeft.apply(this, arguments);
             }
-            originalBlockMouseClickLeft.apply(this, arguments);
-        };
-
-        var originalCommentMouseClickLeft = CommentMorph.prototype.mouseClickLeft;
-        CommentMorph.prototype.mouseClickLeft = function () {
-            var altClicked = this.world().hand.altPressed;
-            if (altClicked) {
-                this.toggleSelection();
-                return;
-            }
-            originalCommentMouseClickLeft.apply(this, arguments);
         };
 
         // 5. Override Workspace Lasso Selection Events
         var originalScriptsMouseDownLeft = ScriptsMorph.prototype.mouseDownLeft;
         ScriptsMorph.prototype.mouseDownLeft = function (pos) {
-            var shiftClicked = this.world().currentKey === 16;
+            var shiftClicked = this.world() && this.world().currentKey === 16;
             if (shiftClicked) {
-                return originalScriptsMouseDownLeft.apply(this, arguments);
+                if (typeof originalScriptsMouseDownLeft === 'function') {
+                    return originalScriptsMouseDownLeft.apply(this, arguments);
+                }
+                return;
             }
 
+            var altHeld = this.world() && this.world().hand.altPressed;
             var groups = this.children.filter(function(child) {
-                return child instanceof LassoGroupMorph;
+                return child && child.isLassoGroup === true;
             });
-            if (groups.length > 0) {
+
+            // If Alt is NOT held, deselect existing groups.
+            // If Alt IS held, we keep the group to allow adding via lasso drag!
+            if (groups.length > 0 && !altHeld) {
                 groups.forEach(function(group) {
                     group.unpack();
                 });
                 this.changed();
-                return;
             }
 
             if (this.focus) { this.focus.stopEditing(); }
+
+            // Clear any orphaned ghost lassos
+            this.children.filter(function(child) {
+                return child.isLassoFeedback === true;
+            }).forEach(function(box) {
+                box.destroy();
+            });
+            if (this.lassoFeedback) {
+                this.lassoFeedback = null;
+            }
 
             this.lassoStart = pos;
             this.lassoFeedback = new BoxMorph();
@@ -292,7 +363,9 @@
             this.lassoFeedback.borderColor = new Color(153, 255, 213, 0.85);
             this.lassoFeedback.border = 2;
             this.lassoFeedback.setPosition(pos);
-            this.lassoFeedback.setExtent(new Point(0, 0));
+            // Chromium throws RangeError on roundRect if width/height is less than border
+            this.lassoFeedback.setExtent(new Point(10, 10));
+            this.lassoFeedback.isLassoFeedback = true;
             this.add(this.lassoFeedback);
 
             this.lockMouseFocus();
@@ -302,7 +375,12 @@
         var originalScriptsMouseMove = ScriptsMorph.prototype.mouseMove;
         ScriptsMorph.prototype.mouseMove = function (pos) {
             if (this.lassoStart && this.lassoFeedback) {
-                var rect = this.lassoStart.rectangle(pos);
+                var width = Math.max(10, Math.abs(pos.x - this.lassoStart.x));
+                var height = Math.max(10, Math.abs(pos.y - this.lassoStart.y));
+                var originX = Math.min(this.lassoStart.x, pos.x);
+                var originY = Math.min(this.lassoStart.y, pos.y);
+                var rect = new Rectangle(originX, originY, originX + width, originY + height);
+                
                 this.lassoFeedback.changed();
                 this.lassoFeedback.bounds = rect;
                 this.lassoFeedback.changed();
@@ -326,55 +404,81 @@
                 this.lassoFeedback = null;
                 this.lassoStart = null;
 
+                var altHeld = this.world() && this.world().hand.altPressed;
+
                 if (rect.width() < 5 || rect.height() < 5) {
+                    if (!altHeld) {
+                        this.children.filter(function(child) {
+                            return child && child.isLassoGroup === true;
+                        }).forEach(function(g) {
+                            g.unpack();
+                        });
+                    }
                     return;
                 }
 
                 var selected = [];
                 this.children.forEach(function(child) {
-                    if ((child instanceof BlockMorph || child instanceof CommentMorph) &&
-                        child.bounds.intersects(rect)) {
+                    if (child instanceof BlockMorph && child.fullBounds().intersects(rect)) {
                         selected.push(child);
                     }
                 });
 
-                if (selected.length > 0) {
-                    var left = Infinity,
-                        top = Infinity,
-                        right = -Infinity,
-                        bottom = -Infinity;
-
-                    selected.forEach(function(morph) {
-                        left = Math.min(left, morph.left());
-                        top = Math.min(top, morph.top());
-                        right = Math.max(right, morph.right());
-                        bottom = Math.max(bottom, morph.bottom());
+                var group = null;
+                if (altHeld) {
+                    group = this.children.find(function(child) {
+                        return child && child.isLassoGroup === true;
                     });
+                } else {
+                    this.children.filter(function(child) {
+                        return child && child.isLassoGroup === true;
+                    }).forEach(function(g) {
+                        g.unpack();
+                    });
+                }
+                
+                var myself = this;
 
-                    var padding = 4;
-                    var groupBounds = new Rectangle(
-                        left - padding,
-                        top - padding,
-                        right + padding,
-                        bottom + padding
-                    );
+                if (altHeld && group) {
+                    var toRemove = [];
+                    group.children.forEach(function(child) {
+                        if (child instanceof BlockMorph && child.fullBounds().intersects(rect)) {
+                            toRemove.push(child);
+                        }
+                    });
+                    toRemove.forEach(function(child) {
+                        group.removeChild(child);
+                        myself.add(child);
+                    });
+                    if (group.children.length === 0) {
+                        group.destroy();
+                        group = null;
+                    }
+                }
 
-                    var group = new LassoGroupMorph();
-                    group.bounds = groupBounds;
+                if (selected.length > 0) {
+                    var isNew = false;
+                    if (!group) {
+                        group = new LassoGroupMorph();
+                        isNew = true;
+                    }
 
                     selected.forEach(function(child) {
                         group.add(child);
                     });
 
-                    this.add(group);
-                    this.changed();
+                    if (isNew) {
+                        this.add(group);
+                    }
                 }
+                
+                this.changed();
             }
         };
 
         var originalScriptsWantsDropOf = ScriptsMorph.prototype.wantsDropOf;
         ScriptsMorph.prototype.wantsDropOf = function (aMorph) {
-            if (aMorph instanceof LassoGroupMorph) {
+            if (aMorph && aMorph.isLassoGroup === true) {
                 return true;
             }
             return originalScriptsWantsDropOf.apply(this, arguments);
@@ -383,7 +487,7 @@
         var originalScriptsToXML = ScriptsMorph.prototype.toXML;
         ScriptsMorph.prototype.toXML = function (serializer) {
             this.children.filter(function(child) {
-                return child instanceof LassoGroupMorph;
+                return child && child.isLassoGroup === true;
             }).forEach(function(group) {
                 group.unpack();
             });
@@ -402,45 +506,21 @@
 
         // 6. Select All helper on ScriptsMorph
         ScriptsMorph.prototype.lassoSelectAll = function () {
-            // Unpack any existing selection first
             var existingGroups = this.children.filter(function(child) {
-                return child instanceof LassoGroupMorph;
+                return child && child.isLassoGroup === true;
             });
             existingGroups.forEach(function(group) { group.unpack(); });
 
             var selected = this.children.filter(function(child) {
-                return child instanceof BlockMorph || child instanceof CommentMorph;
+                return child instanceof BlockMorph;
             });
 
             if (selected.length === 0) { return; }
 
-            var left = Infinity,
-                top = Infinity,
-                right = -Infinity,
-                bottom = -Infinity;
-
-            selected.forEach(function(morph) {
-                left = Math.min(left, morph.left());
-                top = Math.min(top, morph.top());
-                right = Math.max(right, morph.right());
-                bottom = Math.max(bottom, morph.bottom());
-            });
-
-            var padding = 4;
-            var groupBounds = new Rectangle(
-                left - padding,
-                top - padding,
-                right + padding,
-                bottom + padding
-            );
-
             var group = new LassoGroupMorph();
-            group.bounds = groupBounds;
-
             selected.forEach(function(child) {
                 group.add(child);
             });
-
             this.add(group);
             this.changed();
         };
