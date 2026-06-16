@@ -6,7 +6,7 @@ This document serves as a proposal for adding native lasso multi-selection into 
 
 ## 1. Overview & Motivation
 
-Currently in Snap!, managing large script workspaces can be tedious because there is no built-in way to select, drag, duplicate, or delete multiple blocks or comments simultaneously. 
+Currently in Snap! there is no built-in way to select, drag, duplicate, or delete multiple blocks or comments simultaneously. 
 * **The Missing Feature:** A canvas-level click-and-drag bounding box selection (lasso).
 * **The Constraint:** Shift-click is already reserved by Morphic for toggling keyboard input focus.
 * **The Solution:** We propose mapping lasso selection to dragging on the empty workspace background. Combining this with **Alt-click** to toggle items in/out of the active selection and **Backspace/Delete** keys for instant group deletion creates a highly intuitive, industry-standard editor workflow.
