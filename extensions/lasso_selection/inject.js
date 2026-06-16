@@ -390,18 +390,88 @@
             return originalScriptsToXML.apply(this, arguments);
         };
 
-        // 6. Bind Global Backspace/Delete Shortcut
+        // 6b. Add "select all" to ScriptsMorph right-click menu
+        var originalScriptsUserMenu = ScriptsMorph.prototype.userMenu;
+        ScriptsMorph.prototype.userMenu = function () {
+            var menu = originalScriptsUserMenu ? originalScriptsUserMenu.call(this) : new MenuMorph(this);
+            if (!menu) { menu = new MenuMorph(this); }
+            var myself = this;
+            menu.addItem('select all', function() { myself.lassoSelectAll(); });
+            return menu;
+        };
+
+        // 6. Select All helper on ScriptsMorph
+        ScriptsMorph.prototype.lassoSelectAll = function () {
+            // Unpack any existing selection first
+            var existingGroups = this.children.filter(function(child) {
+                return child instanceof LassoGroupMorph;
+            });
+            existingGroups.forEach(function(group) { group.unpack(); });
+
+            var selected = this.children.filter(function(child) {
+                return child instanceof BlockMorph || child instanceof CommentMorph;
+            });
+
+            if (selected.length === 0) { return; }
+
+            var left = Infinity,
+                top = Infinity,
+                right = -Infinity,
+                bottom = -Infinity;
+
+            selected.forEach(function(morph) {
+                left = Math.min(left, morph.left());
+                top = Math.min(top, morph.top());
+                right = Math.max(right, morph.right());
+                bottom = Math.max(bottom, morph.bottom());
+            });
+
+            var padding = 4;
+            var groupBounds = new Rectangle(
+                left - padding,
+                top - padding,
+                right + padding,
+                bottom + padding
+            );
+
+            var group = new LassoGroupMorph();
+            group.bounds = groupBounds;
+
+            selected.forEach(function(child) {
+                group.add(child);
+            });
+
+            this.add(group);
+            this.changed();
+        };
+
+        // 7. Bind Global Keyboard Shortcuts
         window.addEventListener("keydown", function(event) {
-            if (event.keyCode === 8 || event.keyCode === 46) {
-                var worldObj = window.world;
-                if (!worldObj) return;
-                var focus = worldObj.keyboardFocus;
-                var isEditingText = focus && (
-                    focus instanceof CursorMorph ||
-                    (typeof ScriptFocusMorph !== 'undefined' && focus instanceof ScriptFocusMorph) ||
-                    focus.isEditable === true ||
-                    (focus.parent && focus.parent.isEditable === true)
-                );
+            var worldObj = window.world;
+            if (!worldObj) { return; }
+
+            var focus = worldObj.keyboardFocus;
+            var isEditingText = focus && (
+                focus instanceof CursorMorph ||
+                (typeof ScriptFocusMorph !== 'undefined' && focus instanceof ScriptFocusMorph) ||
+                focus.isEditable === true ||
+                (focus.parent && focus.parent.isEditable === true)
+            );
+
+            // Cmd+A / Ctrl+A  — Select All scripts in the active workspace
+            if ((event.ctrlKey || event.metaKey) && (event.key === 'a' || event.key === 'A' || event.keyCode === 65)) {
+                if (!isEditingText) {
+                    event.preventDefault();
+                    var ide = worldObj.children[0];
+                    if (ide && ide.currentSprite && ide.currentSprite.scripts) {
+                        ide.currentSprite.scripts.lassoSelectAll();
+                    }
+                }
+                return;
+            }
+
+            // Backspace / Delete  — Delete the active lasso selection
+            if (event.key === 'Backspace' || event.key === 'Delete') {
                 if (!isEditingText) {
                     var ide = worldObj.children[0];
                     if (ide && ide.currentSprite && ide.currentSprite.scripts) {
@@ -420,7 +490,7 @@
             }
         }, true);
 
-        showToast("Lasso selection active");
+        showToast("Lasso selection active ✦");
     }
 
     initLassoExtension();

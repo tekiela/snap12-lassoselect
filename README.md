@@ -1,15 +1,17 @@
 # Snap! Workspace Lasso Selection Tool
 
-An intuitive rectangle lasso multi-selection tool, Alt-click toggle selection, and Backspace/Delete keyboard shortcut manager for Snap! (Morphic) workspaces. 
+An intuitive rectangle lasso multi-selection tool, Alt-click toggle selection, Select All shortcut, and Backspace/Delete keyboard shortcut manager for Snap! (Morphic) workspaces.
 
 This tool works on both **local** Snap! instances and the official online editor at **`https://snap.berkeley.edu/snap/snap.html`**.
 
 ![Lasso Selection Banner](https://img.shields.io/badge/Snap!-Lasso%20Selection-brightgreen?style=for-the-badge&logo=javascript)
+![Version](https://img.shields.io/badge/version-2.0-blue?style=for-the-badge)
 
 ---
 
 ## ✨ Features
 * **Lasso Selection:** Click and drag on any empty workspace background to draw a bright green-blueish bounding box. Releasing the mouse groups all intersecting blocks and comments.
+* **Select All:** Press `Cmd+A` (macOS) or `Ctrl+A` (Windows/Linux) to instantly select every block and comment in the workspace. Safely falls back to normal text select-all when editing a block input.
 * **Premium Styling:** Displays selection feedback via standard active block glow highlights and comment borders. Bounding boxes are borderless/transparent when inactive (no leftovers).
 * **Alt-Click Modifiers:** Press and hold `Alt` (or `Option` on macOS) while clicking any block or comment to add it to, or remove it from, the active selection.
 * **Instant Deletion:** Press `Backspace` or `Delete` keys to instantly delete the entire selected group without dialog confirmation pop-ups (safely ignored when editing text).
@@ -31,16 +33,24 @@ This runs 100% offline, bypasses browser bookmark URL length limits, and works a
 
 ---
 
-### Method 2: Short Bookmarklet Loader (Zero-Install)
-Bookmarklets run JavaScript directly in your active tab. This loader fetches the script dynamically, works on all browsers (including Safari and Firefox) without length truncation, and automatically gets updates when you push commits to GitHub:
+### Method 2: Bookmarklet (Zero-Install)
+Bookmarklets run JavaScript directly in your active tab.
 
-1. Create a new bookmark in your browser named **Snap! Lasso Tool**.   
-2. Edit the bookmark and paste the following code into the **URL / Location** field:
-   ```javascript
-   javascript:(function(){var%20s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/tekiela/snap12-lassoselect@main/extensions/lasso_selection/inject.js';document.body.appendChild(s);})();
-3. Open a Snap! editor page (e.g. https://snap.berkeley.edu/snap/snap.html) and click the bookmark to activate the tool.
-(Alternatively, if you want the fully offline/self-contained version that doesn't load code from GitHub, you can copy the raw text from 
-minified_bookmarklet.txt and use that as the bookmark URL).   
+#### Option A — CDN Loader *(always up to date, requires internet)*
+1. Create a new bookmark in your browser named **Snap! Lasso Tool**.
+2. Replace the URL with this code:
+   ```
+   javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/tekiela/snap12-lassoselect@main/extensions/lasso_selection/inject.js';document.body.appendChild(s);})();
+   ```
+3. Open a Snap! editor page and click the bookmark to activate.
+
+#### Option B — Self-contained offline bookmarklet *(no internet needed)*
+The entire extension is pre-minified into a single URL-safe string in [minified_bookmarklet.txt](minified_bookmarklet.txt).
+1. Open [minified_bookmarklet.txt](https://raw.githubusercontent.com/tekiela/snap12-lassoselect/main/minified_bookmarklet.txt) — you will see one long line of text.
+2. Select all and copy it.
+3. Create a new bookmark named **Snap! Lasso v2 (offline)** and paste it into the URL field.
+4. Open a Snap! editor page and click the bookmark to activate.
+
 ---
 
 ### Method 3: Browser Extension (Persistent & Automatic)
@@ -59,6 +69,28 @@ Loads the lasso tool automatically on every Snap! tab you open.
 
 ---
 
+## ⌨️ Keyboard Shortcuts
+
+| Shortcut | Action |
+|---|---|
+| `Cmd+A` / `Ctrl+A` | Select all blocks and comments in the workspace |
+| `Backspace` / `Delete` | Delete the active selection |
+| `Alt` + Click | Toggle a block or comment in/out of the selection |
+
+---
+
 ## 🛠️ Technology Stack
 * **Language:** Vanilla JavaScript (ES5 compatible for wide Morphic engine support).
 * **UI Overlays:** HTML5 Canvas extensions & dynamic CSS-in-JS toast notifications.
+
+---
+
+## 📝 Changelog
+
+### v2.0
+* ✅ **NEW: Select All** — `Cmd+A` / `Ctrl+A` selects every block and comment in the workspace.
+* 🐛 **FIX:** Blocks no longer disappear immediately after a lasso drag selection (regression fix).
+* 🔑 **IMPROVED:** Keyboard detection updated to use modern `event.key` instead of deprecated `event.keyCode`.
+
+### v1.0
+* Initial release: rectangle lasso select, Alt-click toggle, group drag, duplicate, delete.
