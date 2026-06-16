@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
   "name": "Snap! Workspace Lasso Selection",
-  "version": "1.0",
-  "description": "Adds rectangle multi-selection, Alt-click toggles, and Backspace/Delete keyboard shortcuts to Snap! workspaces.",
+  "version": "2.0",
+  "description": "Adds rectangle lasso multi-selection, Alt-click toggle, Select All (Cmd+A/Ctrl+A), and Backspace/Delete shortcuts to Snap! workspaces.",
   "permissions": ["activeTab"],
   "content_scripts": [
     {
