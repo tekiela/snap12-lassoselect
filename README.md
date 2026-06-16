@@ -23,9 +23,7 @@ This tool works on both **local** Snap! instances and the official editors at **
 
 ## 🚀 Installation & Loading Methods
 
-Choose the loading format that best fits your workflow:
-
-### Method 1: Portable XML Library (Recommended for Safari & Firefox)
+### Method 1: XML Library For SNAP!
 This runs 100% offline, bypasses browser bookmark URL length limits, and works across all browsers.
 1. Download [libraries/lasso_selection.xml](libraries/lasso_selection.xml).
 2. Open any Snap! editor window.
@@ -35,18 +33,18 @@ This runs 100% offline, bypasses browser bookmark URL length limits, and works a
 
 ---
 
-### Method 2: Bookmarklet (Zero-Install)
-Bookmarklets run JavaScript directly in your active tab.
+### Method 2: Browser Bookmarklet (Zero-Install - but per project)
+Works in all Browsers.
 
-#### Option A — CDN Loader *(always up to date, requires internet)*
+#### A: Internet-version — *(always up to date via cdn)*
 1. Create a new bookmark in your browser named **Snap! Lasso Tool**.
-2. Replace the URL with this code:
+2. Edit and replace the URL with this code:
    ```
    javascript:(function(){var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/gh/tekiela/snap12-lassoselect@main/extensions/lasso_selection/inject.js';document.body.appendChild(s);})();
    ```
 3. Open a Snap! editor page and click the bookmark to activate.
 
-#### Option B — Self-contained offline bookmarklet *(no internet needed)*
+#### B: — Offline-version *(no internet needed)*
 The entire extension is pre-minified into a single URL-safe string in [minified_bookmarklet.txt](minified_bookmarklet.txt).
 1. Open [minified_bookmarklet.txt](https://raw.githubusercontent.com/tekiela/snap12-lassoselect/main/minified_bookmarklet.txt) — you will see one long line of text.
 2. Select all and copy it.
@@ -55,7 +53,7 @@ The entire extension is pre-minified into a single URL-safe string in [minified_
 
 ---
 
-### Method 3: Browser Extension (Persistent & Automatic)
+### Method 3: Browser Extension (Persistent accross projects)
 Loads the lasso tool automatically on every Snap! tab you open.
 
 #### For Chrome / Chromium Browsers:
@@ -68,7 +66,6 @@ Loads the lasso tool automatically on every Snap! tab you open.
 1. Open Firefox and go to `about:debugging`.
 2. Click **This Firefox** -> **Load Temporary Add-on...**
 3. Select `manifest.json` inside the `extensions/lasso_selection` folder.
-
 ---
 
 ## ⌨️ Keyboard Shortcuts
@@ -77,7 +74,10 @@ Loads the lasso tool automatically on every Snap! tab you open.
 |---|---|
 | `Cmd+A` / `Ctrl+A` | Select all blocks and comments in the workspace |
 | `Backspace` / `Delete` | Delete the active selection |
-| `Alt` + Click | Toggle a block or comment in/out of the selection |
+| `Alt` + Click | Toggle a block in/out of the selection |
+| `Alt` + Drag | Toggle a block in/out of the selection | INVERTS the selection!!
+| mouse_Right allows duplication and deletion |
+
 
 ---
 
