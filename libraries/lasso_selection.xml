@@ -1,5 +1,5 @@
 <blocks app="Snap! 12-dev, https://snap.berkeley.edu" version="2">
-  <block-definition s="enable lasso selection (silent: %b)" type="command" category="control">
+  <block-definition s="enable lasso selection (silent: %'silent')" type="command" category="control">
     <comment w="320" collapsed="false">Enables Workspace Lasso Selection.&#xD;&#xD;Make sure &quot;JavaScript extensions&quot; is enabled in Snap! settings before running this block.&#xD;&#xD;Clicking this block will inject the lasso tool prototypes into the Morphic world, allowing you to select blocks, comments, and delete/duplicate them using the Alt key, Delete/Backspace keys, and Cmd+A/Ctrl+A to select all.</comment>
     <header></header>
     <code></code>
