@@ -1,6 +1,8 @@
 (function() {
+    var SILENT_MODE = false; // Change this to true to suppress the "Lasso active" toast popup
+
     function showToast(message) {
-        if (window.lassoSilent) return;
+        if (SILENT_MODE) return;
         var toast = document.createElement('div');
         toast.textContent = message;
         toast.style.position = 'fixed';

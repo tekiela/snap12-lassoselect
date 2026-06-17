@@ -10,7 +10,10 @@
         <block s="reportJSFunction">
           <list></list>
           <l>(function() {&#xD;
+    var SILENT_MODE = false; // Change this to true to suppress the "Lasso active" toast popup&#xD;
+&#xD;
     function showToast(message) {&#xD;
+        if (SILENT_MODE) return;&#xD;
         var toast = document.createElement('div');&#xD;
         toast.textContent = message;&#xD;
         toast.style.position = 'fixed';&#xD;
@@ -586,7 +589,7 @@
 &#xD;
     initLassoExtension();&#xD;
 })();&#xD;
-&#xD;
+
 </l>
         </block>
         <list></list>
