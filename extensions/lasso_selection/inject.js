@@ -1,5 +1,6 @@
 (function() {
     function showToast(message) {
+        if (window.lassoSilent) return;
         var toast = document.createElement('div');
         toast.textContent = message;
         toast.style.position = 'fixed';

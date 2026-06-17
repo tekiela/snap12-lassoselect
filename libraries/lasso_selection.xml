@@ -1,17 +1,16 @@
 <blocks app="Snap! 12-dev, https://snap.berkeley.edu" version="2">
-  <block-definition s="enable lasso selection (silent: %'silent')" type="command" category="control">
+  <block-definition s="enable lasso selection" type="command" category="control">
     <comment w="320" collapsed="false">Enables Workspace Lasso Selection.&#xD;&#xD;Make sure &quot;JavaScript extensions&quot; is enabled in Snap! settings before running this block.&#xD;&#xD;Clicking this block will inject the lasso tool prototypes into the Morphic world, allowing you to select blocks, comments, and delete/duplicate them using the Alt key, Delete/Backspace keys, and Cmd+A/Ctrl+A to select all.</comment>
     <header></header>
     <code></code>
     <translations></translations>
-    <inputs><input type="%b">false</input></inputs>
+    <inputs></inputs>
     <script>
       <block s="doRun">
         <block s="reportJSFunction">
-          <list><l>silent</l></list>
-          <l>(function(silent) {&#xD;
+          <list></list>
+          <l>(function() {&#xD;
     function showToast(message) {&#xD;
-        if (silent) return;&#xD;
         var toast = document.createElement('div');&#xD;
         toast.textContent = message;&#xD;
         toast.style.position = 'fixed';&#xD;
@@ -590,7 +589,7 @@
 &#xD;
 </l>
         </block>
-        <list><block var="silent"/></list>
+        <list></list>
       </block>
     </script>
   </block-definition>
